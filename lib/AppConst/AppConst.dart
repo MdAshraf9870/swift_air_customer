@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 class AppConst{
   static var buttonColors=const Color(0xfff5271ff);
   static var buttonColorsDark=const Color(0xfff6d7ab5);
+  static var buttonCorsDark=const Color(0xfff6d7ab5);
   Future<String> getCalenderDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
