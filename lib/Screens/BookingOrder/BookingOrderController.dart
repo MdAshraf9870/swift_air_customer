@@ -23,9 +23,12 @@ import '../LocationManager.dart';
 import '../ThankYouPage.dart';
 
 class BookingOrderController extends GetxController {
+String date="Date",time="time";
   BuildContext context;
   LoginModel? loginModel;
   bool addDetails=false;
+  bool schedule=false;
+  int bookingPage=0;
   TextEditingController senderNameEdt = TextEditingController();
   TextEditingController lastNameEdt = TextEditingController();
   TextEditingController senderMobileNumberEdt = TextEditingController();

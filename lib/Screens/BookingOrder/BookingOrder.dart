@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:swift_air_customer/Models/BookingAddressModel.dart';
 import 'package:swift_air_customer/Screens/BookingOrder/BookingOrderController.dart';
 
 import '../../AppConst/AppConst.dart';
-import '../../Models/getState.dart';
-import '../../widget/AppTextFormField.dart';
 
+enum SingingCharacter { high,medium,low  }
 class BookingOrder extends StatefulWidget {
   BookingAddressModel? bookingAddressModel;
   BookingOrder(this.bookingAddressModel);
@@ -26,7 +24,7 @@ class _BookingOrderState extends State<BookingOrder> {
   double textFormFieldSize = 55;
 
   double textFormFieldBorderRedius = 13;
-
+ 
   @override
   void initState() {
     // TODO: implement initState
@@ -34,17 +32,39 @@ class _BookingOrderState extends State<BookingOrder> {
     bookingOrderController =
         Get.put(BookingOrderController(widget.bookingAddressModel, context));
   }
+  SingingCharacter? _character = SingingCharacter.medium;
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => Get.delete<BookingOrderController>(),
+      onWillPop: onBack,
       child: GetBuilder(
           init: bookingOrderController,
           builder: (bookingOrderController) => Scaffold(
+            appBar: bookingOrderController.bookingPage==0? AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: Text("Drop at",style: TextStyle(color: Colors.black),),
+              titleSpacing: 0,
+              leading: Icon(Icons.arrow_back_sharp,color: Colors.black,),
+              bottom: PreferredSize(preferredSize: Size(00, 20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Center(
+                      child: Row(children: [
+                        Icon(Icons.my_location,color: Colors.red,),
+                        SizedBox(width: 8,),
+                        Expanded(child: Text( bookingOrderController.bookingAddressModel!.toAdress!,style: TextStyle(overflow: TextOverflow.ellipsis),))
+                      ],),
+                    ),
+                  )
+
+              ),
+            ):null,
               key: bookingOrderController.homeScaffoldKey,
               body: SafeArea(
-                  child: Stack(
+                child: Stack(
                 children: [
                   Container(
                     margin: const EdgeInsets.only(bottom: 20),
@@ -88,6 +108,82 @@ class _BookingOrderState extends State<BookingOrder> {
                       ],
                     ),
                   ),
+                  if(bookingOrderController.bookingPage>0)
+                  GestureDetector(
+                    onTap: (){
+                      bookingOrderController.bookingPage--;
+                      bookingOrderController.update();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      child: Container(
+                         // width: Get.width * 0.82,
+                          //height: 150,
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                              color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade300,
+                                blurRadius: 3
+                              )
+                            ]
+                            //  border: Border.all(width: 0.5),
+                              // borderRadius: BorderRadius.circular(15)
+                          ),
+                          child: Icon(Icons.arrow_back)),
+
+                      /*SizedBox(
+                width: Get.width*0.8,
+                child: textfield(destinationAddressController,
+                    "Search Location",
+                    callback: (String value) {
+                      setState(() {
+                        _destinationAddress = value;
+                      });
+                    },
+                    icon: Padding(
+                      padding: const EdgeInsets.only(right: 3.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          destinationAddressController.text.toString().isNotEmpty
+                              ? InkWell(
+                                  onTap: () {
+                                    destinationAddressController.clear();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
+                                    height: 15,
+                                    width: 15,
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 12,
+                                    ),
+                                  ),
+                                )
+                              : const Text(""),
+                          const SizedBox(width: 5),
+                          InkWell(
+                            onTap: () {
+                              getNewLocation();
+                            },
+                            child: const SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: Icon(Icons.search),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ),
+              ),*/
+                    ),
+                  ),
                   Positioned(
                     bottom: 0,
                     child: Container(
@@ -105,315 +201,505 @@ class _BookingOrderState extends State<BookingOrder> {
                                 spreadRadius: 1)
                           ]),
                       padding: const EdgeInsets.all(20),
-                      child:true?
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        const Text(
-                         "Review Location",
-                          style: TextStyle(
-                              fontSize: 17,
-                              // overflow: TextOverflow.ellipsis,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10,),
-                        Row(
-                         // crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Icon(
-                              Icons.my_location,
-                              color: Colors.green,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    bookingOrderController.bookingAddressModel!.fromAdress!,
-                                    style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Row(children: [
-                                    Icon(Icons.person,color: AppConst.buttonColors,),
-                                    Text(   bookingOrderController.bookingAddressModel!.fromName!,style: TextStyle(color:  AppConst.buttonColors,),)
-                                  ],)
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.more_vert,
-                              color: Colors.black87,
-                              size: 35,
-                            ),
-                            Expanded(
-                                child: Divider(
-                                  thickness: 0.5,
-                                  height: 0.2,
-                                  color: Colors.black,
-                                ))
-                          ],
-                        ),
-                        Row(
-                          // crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Icon(
-                              Icons.my_location,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    bookingOrderController.bookingAddressModel!.toAdress!,
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  Row(children: [
-                                    Icon(Icons.person,color: AppConst.buttonColors,),
-                                    Text( bookingOrderController.receiverNameEdt.text,style: TextStyle(color:  AppConst.buttonColors,),)
-                                  ],)
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 10,),
-                        SizedBox(
-                          width: Get.width,
-                          height: 43,
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                  backgroundColor: AppConst.buttonColors),
-                              onPressed: () {
-                                bookingOrderController.getAddressToLatLng();
-                                // if (bookingOrderController.validation()) {
-                                //   bookingOrderController
-                                //       .getBookOrder(context);
-                                // }
-                                //  print(loginScreenController.loginEdtController.text);
-                              },
-                              child: const Text("Choose Priority",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15))),
-                        ),
-                      ],):
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Driver will call this contact at delivery location",
-                            style: TextStyle(fontWeight: FontWeight.w300),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child:
+                          bookingOrderController.bookingPage==0?
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Please add receiver contact",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.red)),
-                              TextButton(
-                                  onPressed: () {
-                                    bookingOrderController.addDetails=bookingOrderController.addDetails?false:true;
-                                    bookingOrderController.update();
-                                  }, child: Text( bookingOrderController.addDetails?"Cansel":"Add"))
-                            ],
-                          ),
-
-                          Visibility(
-                            visible: bookingOrderController.addDetails,
-                            child: Column(children: [
+                              const Text(
+                                "Driver will call this contact at delivery location",
+                                style: TextStyle(fontWeight: FontWeight.w300),
+                              ),
                               SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  controller:
-                                  bookingOrderController.receiverNameEdt,
-                                  textInputAction: TextInputAction.next,
-                                  focusNode: bookingOrderController.focusReceiverNameEdt,
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Please add receiver contact",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red)),
+                                  TextButton(
+                                      onPressed: () {
+                                        bookingOrderController.addDetails=bookingOrderController.addDetails?false:true;
+                                        bookingOrderController.update();
+                                      }, child: Text( bookingOrderController.addDetails?"Cansel":"Add"))
+                                ],
+                              ),
 
-                                  onChanged: (v) {
-                                    if (v.toString().isNotEmpty) {
-                                      bookingOrderController.errorReceiverNameEdt = "";
-                                      bookingOrderController.update();
-                                    }
-                                  },
+                              Visibility(
+                                visible: bookingOrderController.addDetails,
+                                child: Column(children: [
+                                  SizedBox(
+                                    height: 45,
+                                    child: TextFormField(
+                                      controller:
+                                      bookingOrderController.receiverNameEdt,
+                                      textInputAction: TextInputAction.next,
+                                      focusNode: bookingOrderController.focusReceiverNameEdt,
+
+                                      onChanged: (v) {
+                                        if (v.toString().isNotEmpty) {
+                                          bookingOrderController.errorReceiverNameEdt = "";
+                                          bookingOrderController.update();
+                                        }
+                                      },
 
 
 
-                                  //contentPadding: EdgeInsets.symmetric(horizontal: 4),
+                                      //contentPadding: EdgeInsets.symmetric(horizontal: 4),
 
-                                  decoration: InputDecoration(
-                                    label:
-                                    bookingOrderController.errorReceiverNameEdt.isEmpty?
-                                    Row(
-                                      children: [
-                                        Text("Name"),
-                                        Text(" *",
-                                          style: TextStyle(color: Colors.red),
-                                        )
-                                      ],
-                                    ):
-                                    Text(bookingOrderController.errorReceiverNameEdt),
-                                    labelStyle:  TextStyle(fontSize: 16, color: bookingOrderController.errorReceiverNameEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red),
+                                      decoration: InputDecoration(
+                                        label:
+                                        bookingOrderController.errorReceiverNameEdt.isEmpty?
+                                        Row(
+                                          children: [
+                                            Text("Name"),
+                                            Text(" *",
+                                              style: TextStyle(color: Colors.red),
+                                            )
+                                          ],
+                                        ):
+                                        Text(bookingOrderController.errorReceiverNameEdt),
+                                        labelStyle:  TextStyle(fontSize: 16, color: bookingOrderController.errorReceiverNameEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red),
 
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color:bookingOrderController.errorReceiverNameEdt.isEmpty? Color(0xfff6d7ab5):Colors.red,
-                                          width: 1,
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color:bookingOrderController.errorReceiverNameEdt.isEmpty? Color(0xfff6d7ab5):Colors.red,
+                                              width: 1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(15)
                                         ),
-                                        borderRadius: BorderRadius.circular(15)
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(15),
+                                            borderSide: BorderSide(
+                                                color:bookingOrderController.errorReceiverNameEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red,
+                                                width: 1
+                                            )
+                                        ),
+                                        contentPadding: EdgeInsets.all(4),
+                                        fillColor: Colors.grey.shade200,
+                                        filled: true,
+                                        prefixIcon: Icon(Icons.person),
+                                      ),
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                        borderSide: BorderSide(
-                                            color:bookingOrderController.errorReceiverNameEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red,
-                                            width: 1
-                                        )
-                                    ),
-                                    contentPadding: EdgeInsets.all(4),
-                                    fillColor: Colors.grey.shade200,
-                                    filled: true,
-                                    prefixIcon: Icon(Icons.person),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  controller:
-                                  bookingOrderController.receiverMobileNoEdt,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.next,
-                                  focusNode: bookingOrderController.focusReceiverMobileNoEdt,
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  SizedBox(
+                                    height: 45,
+                                    child: TextFormField(
+                                      controller:
+                                      bookingOrderController.receiverMobileNoEdt,
+                                      keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.next,
+                                      focusNode: bookingOrderController.focusReceiverMobileNoEdt,
 
-                                  onChanged: (v) {
-                                    if (v.toString().isNotEmpty) {
-                                      bookingOrderController.errorReceiverMobileNoEdt = "";
-                                      bookingOrderController.update();
-                                    }
-                                  },
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(10),
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  decoration: InputDecoration(
-                                    label:
-                                    bookingOrderController.errorReceiverMobileNoEdt.isEmpty?
-                                    Row(
-                                      children: [
-                                        Text("Mobile Number"),
-                                        Text(" *",
-                                          style: TextStyle(color: Colors.red),
-                                        )
+                                      onChanged: (v) {
+                                        if (v.toString().isNotEmpty) {
+                                          bookingOrderController.errorReceiverMobileNoEdt = "";
+                                          bookingOrderController.update();
+                                        }
+                                      },
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(10),
+                                        FilteringTextInputFormatter.digitsOnly
                                       ],
-                                    ):
-                                    Text(bookingOrderController.errorReceiverMobileNoEdt),
-                                    labelStyle:  TextStyle(fontSize: 16, color: bookingOrderController.errorReceiverMobileNoEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red),
+                                      decoration: InputDecoration(
+                                        label:
+                                        bookingOrderController.errorReceiverMobileNoEdt.isEmpty?
+                                        Row(
+                                          children: [
+                                            Text("Mobile Number"),
+                                            Text(" *",
+                                              style: TextStyle(color: Colors.red),
+                                            )
+                                          ],
+                                        ):
+                                        Text(bookingOrderController.errorReceiverMobileNoEdt),
+                                        labelStyle:  TextStyle(fontSize: 16, color: bookingOrderController.errorReceiverMobileNoEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red),
 
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color:bookingOrderController.errorReceiverMobileNoEdt.isEmpty? Color(0xfff6d7ab5):Colors.red,
-                                          width: 1,
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color:bookingOrderController.errorReceiverMobileNoEdt.isEmpty? Color(0xfff6d7ab5):Colors.red,
+                                              width: 1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(15)
                                         ),
-                                        borderRadius: BorderRadius.circular(15)
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(15),
+                                            borderSide: BorderSide(
+                                                color:bookingOrderController.errorReceiverMobileNoEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red,
+                                                width: 1
+                                            )
+                                        ),
+                                        contentPadding: EdgeInsets.all(4),
+                                        fillColor: Colors.grey.shade200,
+                                        filled: true,
+                                        prefixIcon: Icon(Icons.call),),
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                        borderSide: BorderSide(
-                                            color:bookingOrderController.errorReceiverMobileNoEdt.isEmpty?  Color(0xfff6d7ab5):Colors.red,
-                                            width: 1
-                                        )
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  SizedBox(
+                                    height: 45,
+                                    child: TextFormField(
+                                      controller:
+                                      bookingOrderController.specialInstructions,
+                                      keyboardType: TextInputType.number,
+                                      textInputAction: TextInputAction.done,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(10),
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      decoration: InputDecoration(
+                                          label: Text("Instructions"),
+                                          contentPadding: EdgeInsets.all(4),
+                                          fillColor: Colors.grey.shade200,
+                                          filled: true,
+                                          prefixIcon: Icon(Icons.note_add_rounded),
+                                          border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(15))),
                                     ),
-                                    contentPadding: EdgeInsets.all(4),
-                                    fillColor: Colors.grey.shade200,
-                                    filled: true,
-                                    prefixIcon: Icon(Icons.call),),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  SizedBox(
+                                    width: Get.width,
+                                    height: 43,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                            backgroundColor: AppConst.buttonColors),
+                                        onPressed: () {
+
+                                          if (bookingOrderController.validation()) {
+                                           bookingOrderController.bookingPage++;
+                                           bookingOrderController.update();
+                                          }
+                                          //  print(loginScreenController.loginEdtController.text);
+                                        },
+                                        child: const Text("Next",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15))),
+                                  ),
+                                ],),
+                              )
+                            ],
+                          ):
+                          bookingOrderController.bookingPage==1?
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                            const Text(
+                             "Review Location",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  // overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 10,),
+                            Row(
+                             // crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 6,
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              SizedBox(
-                                height: 45,
-                                child: TextFormField(
-                                  controller:
-                                  bookingOrderController.specialInstructions,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.done,
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(10),
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  decoration: InputDecoration(
-                                      label: Text("Instructions"),
-                                      contentPadding: EdgeInsets.all(4),
-                                      fillColor: Colors.grey.shade200,
-                                      filled: true,
-                                      prefixIcon: Icon(Icons.note_add_rounded),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15))),
+                                Icon(
+                                  Icons.my_location,
+                                  color: Colors.green,
                                 ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        bookingOrderController.bookingAddressModel!.fromAdress!,
+                                        style: TextStyle(
+                                            overflow: TextOverflow.ellipsis,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Row(children: [
+                                        Icon(Icons.person,color: AppConst.buttonColors,),
+                                        Text(   bookingOrderController.bookingAddressModel!.fromName!,style: TextStyle(color:  AppConst.buttonColors,),)
+                                      ],)
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.more_vert,
+                                  color: Colors.black87,
+                                  size: 35,
+                                ),
+                                Expanded(
+                                    child: Divider(
+                                      thickness: 0.5,
+                                      height: 0.2,
+                                      color: Colors.black,
+                                    ))
+                              ],
+                            ),
+                            Row(
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 6,
+                                ),
+                                Icon(
+                                  Icons.my_location,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        bookingOrderController.bookingAddressModel!.toAdress!,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Row(children: [
+                                        Icon(Icons.person,color: AppConst.buttonColors,),
+                                        Text( bookingOrderController.receiverNameEdt.text,style: TextStyle(color:  AppConst.buttonColors,),)
+                                      ],)
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 10,),
+                            SizedBox(
+                              width: Get.width,
+                              height: 43,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                      backgroundColor: AppConst.buttonColors),
+                                  onPressed: () {
+                                    bookingOrderController.bookingPage++;
+                                    bookingOrderController.update();
+                                    // if (bookingOrderController.validation()) {
+                                    //   bookingOrderController
+                                    //       .getBookOrder(context);
+                                    // }
+                                    //  print(loginScreenController.loginEdtController.text);
+                                  },
+                                  child: const Text("Choose Priority",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15))),
+                            ),
+                          ],):
+                          Column(
+
+                            children: [
+                              Row(
+                                children: [
+
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        const Text("High",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
+
+                                        Image.asset("assets/images/high.png",height: 45,width: 45,),
+                                        Radio(
+                                          value: SingingCharacter.high,
+                                          groupValue: _character,
+                                          onChanged: (i){
+                                            setState(() {
+                                              _character=i!;
+                                            });
+                                          },
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+
+                                    child: Column(
+                                      children: [
+                                        const Text("Medium",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                        Image.asset("assets/images/medium.png",height: 45,width: 45,),
+                                        Radio(
+                                          value: SingingCharacter.medium,
+                                          groupValue: _character,
+                                          onChanged: (i){
+                                            setState(() {
+                                              _character=i!;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+
+                                    child: Column(
+                                      children: [
+                                        Text("Low",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                        Image.asset("assets/images/low.png",height: 45,width: 45,),
+                                        Radio(
+                                          value: SingingCharacter.low,
+                                          groupValue: _character,
+                                          onChanged: (i){
+                                            setState(() {
+                                              _character=i!;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                ],
                               ),
-                              const SizedBox(
-                                height: 10,
+                              Visibility(
+                                visible: bookingOrderController.schedule,
+                                child: Column(children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Schedule a Ride",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
+                                      TextButton(onPressed: (){
+                                            bookingOrderController.schedule=false;
+                                            bookingOrderController.date="Date";
+                                            bookingOrderController.time="Time";
+                                            bookingOrderController.update();
+                                      }, child: const Text("Schedule Cancel",style: TextStyle(color: Colors.red),))
+                                    ],
+                                  ),
+                                  SizedBox(height: 15,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: Get.width*0.4,
+                                        height: 40,
+                                        child: TextButton(
+                                            style: TextButton.styleFrom(
+                                                backgroundColor: Colors.grey.shade200
+                                            ),
+                                            onPressed: (){
+                                              AppConst().getCalenderDate(context).then((value) {
+                                                bookingOrderController.date=value;
+                                                bookingOrderController.update();
+                                              });
+
+                                            }, child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(bookingOrderController.date,style: TextStyle(color: Colors.black),),Icon(Icons.date_range,color: AppConst.buttonColors,)
+                                          ],)),
+                                      ),
+                                      SizedBox(width: 15,),
+                                      SizedBox(
+                                        width: Get.width*0.4,
+                                        height: 40,
+                                        child: TextButton(
+                                            style: TextButton.styleFrom(
+                                                backgroundColor: Colors.grey.shade200
+                                            ),
+                                            onPressed: (){
+                                              AppConst().getTimePicker(context).then((value) {
+                                                bookingOrderController.time=value;
+                                                bookingOrderController.update();
+
+                                              });
+                                            }, child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(bookingOrderController.time,style: TextStyle(color: Colors.black),),Icon(Icons.timer_sharp,color: AppConst.buttonColors,)
+                                          ],)),
+                                      ),
+                                      // Container(
+                                      //   width: Get.width*0.35,
+                                      //   height: 40,
+                                      //   decoration: BoxDecoration(
+                                      //   color: Colors.grey.shade400,
+                                      // ),)
+                                    ],),
+                                ],),
                               ),
-                              SizedBox(
-                                width: Get.width,
-                                height: 43,
-                                child: ElevatedButton(
+                              SizedBox(height: 15,),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                         backgroundColor: AppConst.buttonColors),
-                                    onPressed: () {
-                                      bookingOrderController.getAddressToLatLng();
-                                      // if (bookingOrderController.validation()) {
-                                      //   bookingOrderController
-                                      //       .getBookOrder(context);
-                                      // }
-                                      //  print(loginScreenController.loginEdtController.text);
-                                    },
-                                    child: const Text("Next",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15))),
-                              ),
-                            ],),
-                          )
-                        ],
-                      ),
+                                    onPressed: (){
+                                      if(bookingOrderController.schedule){
+                                        if(bookingOrderController.date.toLowerCase()=="date"){
+                                          print("sdfjdjf");
+                                          Get.snackbar("Error", "Please select date.",backgroundColor: Colors.white);
+                                        }else if(bookingOrderController.time.toLowerCase()=="time"){
+                                          Get.snackbar("Error", "Please select time");
+                                        }else{
+                                          bookingOrderController.getBookOrder(context);
+                                        }
+                                      }else{
+                                        bookingOrderController.getBookOrder(context);
+                                      }
+
+
+                                }, child: Text("Book")),
+                                SizedBox(width: 15,),
+                                Visibility(
+                                  visible: !bookingOrderController.schedule,
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                          backgroundColor: AppConst.buttonColors),
+                                      onPressed: (){
+                              bookingOrderController.schedule=true;
+                              bookingOrderController.update();
+                                  }, child: Text("Schedule")),
+                                )
+                              ],)
+
+                            ],
+                          ),
+
+
+
                     ),
                   ),
                 ],
               )))),
     );
   }
+ Future<bool> onBack() async{
+
+    if( bookingOrderController.bookingPage!=0){
+      bookingOrderController.bookingPage--;
+      bookingOrderController.update();
+    }else{
+      Get.delete<BookingOrderController>();
+      return true;
+    }
+    return false;
+ }
 }
 
 // Padding(
