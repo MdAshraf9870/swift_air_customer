@@ -29,6 +29,7 @@ String date="Date",time="time";
   bool addDetails=false;
   bool schedule=false;
   int bookingPage=0;
+  String priority="";
   TextEditingController senderNameEdt = TextEditingController();
   TextEditingController lastNameEdt = TextEditingController();
   TextEditingController senderMobileNumberEdt = TextEditingController();
@@ -227,12 +228,12 @@ void onInit() {
   }
 
   getBookOrder(BuildContext context) {
-    try {
+  //  try {
       ProgressDialogsManager().isShowProgressDialog(context);
       Map map = {
           "customerId": loginModel!.customerId,
           "accessToken": loginModel!.accessToken,
-          "booking_date": "a",
+          "booking_date": date.toLowerCase()=="data"? "":date,
 
           "sender_name": senderNameEdt.text,
           "sender_phone": senderMobileNumberEdt.text,
@@ -259,8 +260,8 @@ void onInit() {
           "packet_type": packetTypeValue,
           "packet_classify": packetClassifyValue,
 
-          "priority": "",
-            "special_instructions": specialInstructions,
+          "priority": priority,
+            "special_instructions": specialInstructions.text,
           "vehicle_type": "",
           "priority_colour": ""
         };
@@ -282,10 +283,10 @@ void onInit() {
         }
         ProgressDialogsManager().isDismissProgressDialog(context);
       });
-    } catch (e) {
-      ProgressDialogsManager().isDismissProgressDialog(context);
-      print(e.toString());
-    }
+    // } catch (e) {
+    //   ProgressDialogsManager().isDismissProgressDialog(context);
+    //   print(e.toString());
+    // }
   }
   LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high,
@@ -334,7 +335,8 @@ void onInit() {
 
       tempLat=d.body.toString().split("https://maps.google.com/maps/api/staticmap?center=")[1].toString().split("%2C")[0];
       tempLng=d.body.toString().split("https://maps.google.com/maps/api/staticmap?center=")[1].toString().split("%2C")[1].split("&amp")[0];
-
+      bookingAddressModel!.fromLat=tempLat;
+      bookingAddressModel!.fromLng=tempLng;
       print(tempLat);
       print(tempLng);
       var point=LatLng(double.parse(bookingAddressModel!.toLat.toString()), double.parse(bookingAddressModel!.toLng.toString()));

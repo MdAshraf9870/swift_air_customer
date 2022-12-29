@@ -36,6 +36,7 @@ class Apis {
   Future<dynamic> callApi(Map map,Uri url,BuildContext context) async {
     try{
       var response= await http.post(url,body: map);
+      print(response.body);
           if(response.statusCode==200){
             print(response.body);
             if(jsonDecode(response.body)["message"]=="Customer has logged in from another device"){

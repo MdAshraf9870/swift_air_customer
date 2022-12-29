@@ -9,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:swift_air_customer/Apis/Apis.dart';
 import 'package:swift_air_customer/AppConst/AppConst.dart';
@@ -20,9 +21,7 @@ import 'package:http/http.dart' as http;
 import '../support/CustomProgressDialog.dart';
 import 'BookingOrder/BookingOrder.dart';
 import 'LocationManager.dart';
-import 'ThankYouPage.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
@@ -45,7 +44,7 @@ class MapSampleState extends State<GoogleMapScreen> {
   TextEditingController nameEdt = TextEditingController();
   TextEditingController numberEdt = TextEditingController();
   bool isCurrentLocationRecived = false;
-  bool permissionOn = false;
+  bool permissionOn = true;
   BookingAddressModel bookingAddressModel =BookingAddressModel();
   LocationManager locationManager = Get.put(
     LocationManager(),
@@ -66,13 +65,13 @@ class MapSampleState extends State<GoogleMapScreen> {
   final Mode _mode = Mode.fullscreen;
   String? address,pickupLocation,deliveryLocation;
   int type=3;
+  bool location=false;
+ late  GoogleMapController controller ;
   @override
   void initState() {
     super.initState();
     //locationManager.getLocation();
-
-
-    getCurrentLocation();
+    getPermission();
     SharePreferencesManager.instance.getlogindetails().then((value) {
       setState(() {
         loginModel = value;
@@ -84,6 +83,20 @@ class MapSampleState extends State<GoogleMapScreen> {
       });
     });
   }
+
+  getPermission() async {
+     controller = await _controller.future;
+    print(await Permission.location.isDenied);
+   if(await Permission.location.isDenied){
+     await Permission.location.request();
+     getCurrentLocation();
+   }else if(await Permission.location.isGranted){
+     getCurrentLocation();
+   }else{
+     permissionOn=false;
+   }
+
+  }
   // https://maps.googleapis.com/maps/api/place/details/json?fields=name%d%2Cformatted_phone_number&place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&key=AIzaSyA0Rx4E-BYlFldkYosPDom81hEcMVaa2fc
   // // https://maps.googleapis.com/maps/api/place/details/json?fields=des%2Crating%2Cformatted_phone_number&place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&key=/
   @override
@@ -91,7 +104,7 @@ class MapSampleState extends State<GoogleMapScreen> {
     return Scaffold(
       key: homeScaffoldKey,
       body: SafeArea(
-        child: Stack(
+        child: permissionOn? Stack(
           children: [
             Container(
               margin: const EdgeInsets.only(bottom: 100),
@@ -200,7 +213,7 @@ class MapSampleState extends State<GoogleMapScreen> {
 
                             Expanded(
                               child: Text(
-                                deliveryLocation ?? "Choose Destination",
+                                "Choose Destination",
                                 style: TextStyle(
                                     color: Colors.black,
                                     overflow: TextOverflow.ellipsis,
@@ -449,7 +462,29 @@ class MapSampleState extends State<GoogleMapScreen> {
               ),
             ),
           ],
-        ),
+        ):Center(child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset("assets/images/location.png",height: 200,),
+          const SizedBox(height: 10,),
+          const Text("PLesae enable location permission and try again.!",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w400),),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppConst.buttonColors
+                ),
+                onPressed: () async {
+                  if (await Permission.location.isDenied) {
+                    openAppSettings();
+                  }
+            }, child: Text("ON")),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppConst.buttonColors
+                ),
+                onPressed: () async {
+                getCurrentLocation();
+                }, child: const Text("Try again")),
+        ],),),
       ),
     );
   }
@@ -458,9 +493,16 @@ class MapSampleState extends State<GoogleMapScreen> {
     distanceFilter: 2,
   );
   getCurrentLocation() async {
+
+    if (await Permission.location.isDenied){
+      permissionOn=false;
+    }else{
+      permissionOn=true;
+    }
+    setState(() {});
+    if(!permissionOn)return;
     ProgressDialogsManager().isShowProgressDialog(context);
     StreamSubscription<Position>? positionStream;
-    final GoogleMapController controller = await _controller.future;
     locationManager.determinePosition().then((value) {
       positionStream = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position? position) {
         print(position!.longitude.toString()+"djbjdsbf");
@@ -696,7 +738,8 @@ class MapSampleState extends State<GoogleMapScreen> {
     );
   }
 
-  Future<void> _handlePressButton(int type,{String? searchTitle}) async {
+  Future<void> _handlePressButton(int type,{String? searchTitle}
+      ) async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
         apiKey: Apis.kGoogleApiKey,
@@ -706,7 +749,7 @@ class MapSampleState extends State<GoogleMapScreen> {
         language: 'en',
         strictbounds: false,
         types: [""],
-
+          textStyle: TextStyle(color: Colors.white),
         decoration: InputDecoration(
             suffixIcon: type==0?IconButton(onPressed: () {   getCurrentLocation();
             this.type=type;

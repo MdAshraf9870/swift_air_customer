@@ -520,14 +520,21 @@ class _BookingOrderState extends State<BookingOrder> {
                                         const Text("High",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
 
                                         Image.asset("assets/images/high.png",height: 45,width: 45,),
-                                        Radio(
-                                          value: SingingCharacter.high,
-                                          groupValue: _character,
-                                          onChanged: (i){
-                                            setState(() {
-                                              _character=i!;
-                                            });
-                                          },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("₹ 0.00",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
+
+                                            Radio(
+                                              value: SingingCharacter.high,
+                                              groupValue: _character,
+                                              onChanged: (i){
+                                                setState(() {
+                                                  _character=i!;
+                                                });
+                                              },
+                                            ),
+                                          ],
                                         ),
 
                                       ],
@@ -539,14 +546,21 @@ class _BookingOrderState extends State<BookingOrder> {
                                       children: [
                                         const Text("Medium",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
                                         Image.asset("assets/images/medium.png",height: 45,width: 45,),
-                                        Radio(
-                                          value: SingingCharacter.medium,
-                                          groupValue: _character,
-                                          onChanged: (i){
-                                            setState(() {
-                                              _character=i!;
-                                            });
-                                          },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("₹ 0.00",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
+
+                                            Radio(
+                                              value: SingingCharacter.medium,
+                                              groupValue: _character,
+                                              onChanged: (i){
+                                                setState(() {
+                                                  _character=i!;
+                                                });
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -557,14 +571,21 @@ class _BookingOrderState extends State<BookingOrder> {
                                       children: [
                                         Text("Low",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
                                         Image.asset("assets/images/low.png",height: 45,width: 45,),
-                                        Radio(
-                                          value: SingingCharacter.low,
-                                          groupValue: _character,
-                                          onChanged: (i){
-                                            setState(() {
-                                              _character=i!;
-                                            });
-                                          },
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text("₹ 0.00",style: TextStyle(color: Colors.black,fontSize: 14,fontWeight: FontWeight.w500),),
+
+                                            Radio(
+                                              value: SingingCharacter.low,
+                                              groupValue: _character,
+                                              onChanged: (i){
+                                                setState(() {
+                                                  _character=i!;
+                                                });
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -642,13 +663,24 @@ class _BookingOrderState extends State<BookingOrder> {
                               SizedBox(height: 15,),
 
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                   // crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset("assets/images/money.png",height: 50),
+                                      Text(" Crop",style: TextStyle(color: AppConst.buttonColors,fontSize: 18,fontWeight: FontWeight.bold),),
+
+                                    ],
+                                  ),
                                 ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                         backgroundColor: AppConst.buttonColors),
                                     onPressed: (){
+                                      bookingOrderController.priority = _character!.name;
+
                                       if(bookingOrderController.schedule){
                                         if(bookingOrderController.date.toLowerCase()=="date"){
                                           print("sdfjdjf");
@@ -656,15 +688,15 @@ class _BookingOrderState extends State<BookingOrder> {
                                         }else if(bookingOrderController.time.toLowerCase()=="time"){
                                           Get.snackbar("Error", "Please select time");
                                         }else{
-                                          bookingOrderController.getBookOrder(context);
+                                         bookingOrderController.getBookOrder(context);
                                         }
                                       }else{
-                                        bookingOrderController.getBookOrder(context);
+                                       bookingOrderController.getBookOrder(context);
                                       }
 
 
                                 }, child: Text("Book")),
-                                SizedBox(width: 15,),
+                               // SizedBox(width: 15,),
                                 Visibility(
                                   visible: !bookingOrderController.schedule,
                                   child: ElevatedButton(

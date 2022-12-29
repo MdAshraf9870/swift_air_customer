@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:swift_air_customer/Screens/LoginScreen/LoginScreen.dart';
 import 'package:swift_air_customer/Screens/SignUpScreen/SignUpScreen.dart';
 
@@ -14,6 +15,12 @@ class AuthenticationPage extends StatefulWidget {
 }
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    getPermission();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,5 +68,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         ),
       ),
     );
+  }
+
+  getPermission() async {
+    if(await Permission.location.isDenied){
+      await Permission.location.request();
+
+    }
   }
 }

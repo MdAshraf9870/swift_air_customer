@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:swift_air_customer/Screens/Dashboard/Dashboard.dart';
-import 'package:swift_air_customer/Screens/LoginScreen/LoginScreen.dart';
 import 'package:swift_air_customer/support/SharePreferencesManager.dart';
 
 import 'Authantication/AuthanticationPaga.dart';
@@ -20,7 +20,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 3)).then((value){
+
+    Future.delayed(Duration(seconds: 3)).then((value) async {
+      if(await Permission.location.isDenied){
+        await Permission.location.request();
+      }
       try{
         SharePreferencesManager.instance.getlogindetails().then((value) {
           print(value.status);

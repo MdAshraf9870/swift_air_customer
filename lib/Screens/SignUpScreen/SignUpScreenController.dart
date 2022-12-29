@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:swift_air_customer/Apis/Apis.dart';
 import 'package:swift_air_customer/Screens/LoginScreen/LoginScreen.dart';
 import 'package:swift_air_customer/support/AlertDialogManager.dartAlertDialogManager.dart';
@@ -46,9 +47,14 @@ class SignUpScreenController extends GetxController {
   GetState? getCityValue;
   @override
   void onInit() {
+    getPermission();
     getCountry();
   }
-
+  getPermission() async {
+    if (await Permission.location.isDenied) {
+      await Permission.location.request();
+    }
+  }
   getCountry() {
     Map map = {"countrycode": "IND"};
     Apis().callApi(map, Apis.getCountry, context!).then((value) {

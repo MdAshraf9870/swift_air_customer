@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:swift_air_customer/Screens/Dashboard/Dashboard.dart';
-import 'package:swift_air_customer/Screens/LoginScreen/LoginScreen.dart';
 import 'package:swift_air_customer/Screens/OTPVerification/OTPVerification.dart';
 import 'package:swift_air_customer/support/AlertDialogManager.dartAlertDialogManager.dart';
 import 'package:swift_air_customer/support/SharePreferencesManager.dart';
@@ -31,9 +31,16 @@ bool validetion(){
 }
 
 
-
-
-login(BuildContext context, {LoginScreenController? loginScreenController}){
+@override
+  void onInit() {
+getPermission();
+  }
+getPermission() async {
+  if (await Permission.location.isDenied) {
+    await Permission.location.request();
+  }
+}
+  login(BuildContext context, {LoginScreenController? loginScreenController}){
   try{
     ProgressDialogsManager().isShowProgressDialog(context);
     Map map={
