@@ -18,7 +18,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   @override
   void initState() {
-    super.initState();
+    super.initState();                  
     getPermission();
   }
   @override
