@@ -202,7 +202,7 @@ class MapSampleState extends State<GoogleMapScreen> {
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
-                          children:  [
+                          children:  const [
                             Icon(
                               Icons.location_on_outlined,
                               color: Colors.red,
@@ -213,7 +213,7 @@ class MapSampleState extends State<GoogleMapScreen> {
 
                             Expanded(
                               child: Text(
-                                "Choose Destination",
+                                "Drop Location",
                                 style: TextStyle(
                                     color: Colors.black,
                                     overflow: TextOverflow.ellipsis,
@@ -756,7 +756,7 @@ class MapSampleState extends State<GoogleMapScreen> {
             Get.back();
             },icon: const Icon(Icons.my_location,color: Colors.white,),):null,
             hintText: searchTitle ?? 'Search',
-            hintStyle: TextStyle(color: Colors.black),
+            hintStyle: TextStyle(color: Colors.white),
 
             // focusedBorder: OutlineInputBorder(
             //     borderRadius: BorderRadius.circular(20),

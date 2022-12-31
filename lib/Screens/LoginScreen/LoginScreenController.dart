@@ -44,33 +44,33 @@ getPermission() async {
   try{
     ProgressDialogsManager().isShowProgressDialog(context);
     Map map={
-      // "phone":loginEdtController.text,
-      // "deviceid":"ddfdsf",
-      // "fcm_token":"dsfdsfdsf",
-      // "app_ver":""
+      "phone":loginEdtController.text,
+      "deviceid":"ddfdsf",
+      "fcm_token":"dsfdsfdsf",
+      "app_ver":""
 
-      "customerId":"204",
-      "accessToken":"0191caa6788f80ccb551c15c2138310d",
-      "from_location":"true",
-      "to_location":"false"
+      // "customerId":"204",
+      // "accessToken":"0191caa6788f80ccb551c15c2138310d",
+      // "from_location":"true",
+      // "to_location":"false"
     };
-    Apis().callApi(map, Uri.parse("https://routplaner.com/api/custgetpastlocation") ,context).then((value) {
+    Apis().callApi(map, Apis.login ,context).then((value) {
       print(jsonDecode(value)["status"]);
       if(value !=null && jsonDecode(value)["status"]){
         print(jsonDecode(value)["message"]);
-       // SharePreferencesManager.instance.setLoginData(value.toString());
-       //  AlertDialogManager().IsAlertDialogMessage(context, "Success", jsonDecode(value)["message"], (){
-       //
-       //    SharePreferencesManager.instance.getlogindetails().then((value){
-       //      print(value.name);
-       //      print(value.address);
-       //    });
-       //    if(loginScreenController!=null){
-       //      Get.offAll(OTPVerification(loginEdtController.text,loginScreenController));
-       //    }
-       //
-       // //   Get.delete<LoginScreenController>();
-       //  });
+       SharePreferencesManager.instance.setLoginData(value.toString());
+        AlertDialogManager().IsAlertDialogMessage(context, "Success", jsonDecode(value)["message"], (){
+
+          SharePreferencesManager.instance.getlogindetails().then((value){
+            print(value.name);
+            print(value.address);
+          });
+          if(loginScreenController!=null){
+            Get.offAll(OTPVerification(loginEdtController.text,loginScreenController));
+          }
+
+       //   Get.delete<LoginScreenController>();
+        });
 
       }else if(value !=null && !jsonDecode(value)["status"]){
         AlertDialogManager().IsAlertDialogMessage(context, "Error", jsonDecode(value)["message"], (){

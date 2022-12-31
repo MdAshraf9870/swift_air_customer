@@ -24,7 +24,7 @@ class _BookingOrderState extends State<BookingOrder> {
   double textFormFieldSize = 55;
 
   double textFormFieldBorderRedius = 13;
- 
+
   @override
   void initState() {
     // TODO: implement initState
@@ -45,10 +45,10 @@ class _BookingOrderState extends State<BookingOrder> {
               backgroundColor: Colors.white,
               elevation: 0,
               automaticallyImplyLeading: false,
-              title: Text("Drop at",style: TextStyle(color: Colors.black),),
+              title: const Text("Drop at",style: TextStyle(color: Colors.black),),
               titleSpacing: 0,
-              leading: Icon(Icons.arrow_back_sharp,color: Colors.black,),
-              bottom: PreferredSize(preferredSize: Size(00, 20),
+              leading: const Icon(Icons.arrow_back_sharp,color: Colors.black,),
+              bottom: PreferredSize(preferredSize: const Size(00, 20),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Center(
@@ -254,7 +254,7 @@ class _BookingOrderState extends State<BookingOrder> {
                                         label:
                                         bookingOrderController.errorReceiverNameEdt.isEmpty?
                                         Row(
-                                          children: [
+                                          children: const [
                                             Text("Name"),
                                             Text(" *",
                                               style: TextStyle(color: Colors.red),
@@ -349,12 +349,7 @@ class _BookingOrderState extends State<BookingOrder> {
                                     child: TextFormField(
                                       controller:
                                       bookingOrderController.specialInstructions,
-                                      keyboardType: TextInputType.number,
                                       textInputAction: TextInputAction.done,
-                                      inputFormatters: [
-                                        LengthLimitingTextInputFormatter(10),
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
                                       decoration: InputDecoration(
                                           label: Text("Instructions"),
                                           contentPadding: EdgeInsets.all(4),
