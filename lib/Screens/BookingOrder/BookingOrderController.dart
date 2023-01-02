@@ -45,6 +45,13 @@ String date="Date",time="time";
   TextEditingController receiverMobileNoEdt = TextEditingController();
   TextEditingController receiverAddressEdt = TextEditingController();
 
+
+TextEditingController buildingNameEdt = TextEditingController();
+TextEditingController floorEdt = TextEditingController();
+TextEditingController flatNumberEdt = TextEditingController();
+TextEditingController nearBuyEdt = TextEditingController();
+
+
   TextEditingController passwordEdt = TextEditingController();
   TextEditingController emailEdt = TextEditingController();
   TextEditingController companyEdt = TextEditingController();
@@ -237,13 +244,13 @@ void onInit() {
 
           "sender_name": senderNameEdt.text,
           "sender_phone": senderMobileNumberEdt.text,
-          "from_location": pickUpAddressEdt.text,
+          "from_location":bookingAddressModel!.fromAdress,
           "pickup_lat": bookingAddressModel!.fromLat ?? "",
           "pickup_long": bookingAddressModel!.fromLng ?? "",
 
           "to_name": receiverNameEdt.text,
           "to_phone": receiverMobileNoEdt.text,
-          "to_location": receiverAddressEdt.text,
+          "to_location": bookingAddressModel!.toAdress,
           "to_lat": bookingAddressModel!.toLat ?? "",
           "to_long": bookingAddressModel!.toLng ?? "",
 

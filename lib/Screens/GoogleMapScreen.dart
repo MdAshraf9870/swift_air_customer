@@ -568,7 +568,7 @@ class MapSampleState extends State<GoogleMapScreen> {
     if(response.statusCode==200){
       googleAddressModel=GoogleAddressModel.fromJson(jsonDecode(response.body));
       print(googleAddressModel.results![0].formattedAddress);
-      setState(() {
+      setState(()  {
         _currentAddress=googleAddressModel.results![0].formattedAddress!;
         if(type==0){
           this.type=type;
@@ -576,6 +576,8 @@ class MapSampleState extends State<GoogleMapScreen> {
           bookingAddressModel.fromLng=long.toString();
           bookingAddressModel.fromAdress=_currentAddress;
           pickupLocation=_currentAddress;
+          setPickupAddress(type);
+
         }else if(type==1){
           this.type=4;
           bookingAddressModel.toLat=lat.toString();
@@ -584,7 +586,7 @@ class MapSampleState extends State<GoogleMapScreen> {
           deliveryLocation=_currentAddress;
           bookingAddressModel.fromName=nameEdt.text;
           bookingAddressModel.fromMobile=numberEdt.text;
-          Get.to(BookingOrder(bookingAddressModel));
+          Get.to(BookingOrder(bookingAddressModel,"Drop at",type));
         }
         destinationAddressController.text = _currentAddress;
         destinationAddress = _currentAddress;
@@ -594,6 +596,7 @@ class MapSampleState extends State<GoogleMapScreen> {
   }catch(e){
     print(e);
   }
+
 
     
     // List<Placemark> placeMarks = await placemarkFromCoordinates(lat!, long!,localeIdentifier: g ??"");
@@ -618,7 +621,14 @@ class MapSampleState extends State<GoogleMapScreen> {
     //   placeMark.toString(),
     // );
   }
-
+  setPickupAddress(int type) async {
+    var result = await Get.to(BookingOrder(bookingAddressModel,"Pickup Location",type));
+    if(result !=null){
+      setState(() {
+        bookingAddressModel;
+      });
+    }
+  }
   // Future<bool> getNewLocation() async {
   //   List<Location> destinationPlacemark = await locationFromAddress(_destinationAddress);
   //   destinationLatitude = destinationPlacemark[0].latitude;
