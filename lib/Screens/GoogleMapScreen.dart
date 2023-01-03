@@ -575,6 +575,9 @@ class MapSampleState extends State<GoogleMapScreen> {
           bookingAddressModel.fromLat=lat.toString();
           bookingAddressModel.fromLng=long.toString();
           bookingAddressModel.fromAdress=_currentAddress;
+          bookingAddressModel.fromName=nameEdt.text;
+          bookingAddressModel.fromMobile=numberEdt.text;
+
           pickupLocation=_currentAddress;
           setPickupAddress(type);
 
@@ -623,9 +626,10 @@ class MapSampleState extends State<GoogleMapScreen> {
   }
   setPickupAddress(int type) async {
     var result = await Get.to(BookingOrder(bookingAddressModel,"Pickup Location",type));
+    print(result);
     if(result !=null){
       setState(() {
-        bookingAddressModel;
+        pickupLocation=bookingAddressModel.fromAdress;
       });
     }
   }

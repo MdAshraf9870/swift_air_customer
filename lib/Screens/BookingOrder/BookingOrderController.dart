@@ -110,8 +110,9 @@ String packetTypeValue="General";
   GetState? getStateValue;
   GetState? getCityValue;
   BookingAddressModel? bookingAddressModel;
+  int type;
   Set<Marker> markers = Set();
-  BookingOrderController(this. bookingAddressModel,this.context);
+  BookingOrderController(this. bookingAddressModel,this.context,this.type);
   final Completer<GoogleMapController> controller = Completer();
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   LocationManager locationManager = Get.put(
@@ -138,7 +139,7 @@ void onInit() {
       if(bookingAddressModel!.fromAdress==loginModel!.address){
         getAddressToLatLng();
       }else{
-        var point=LatLng(double.parse(bookingAddressModel!.toLat.toString()), double.parse(bookingAddressModel!.toLng.toString()));
+        var point=LatLng(double.parse(bookingAddressModel!.toLat ?? "0.0"), double.parse(bookingAddressModel!.toLng ?? "0.0"));
         markers.add(
           Marker(
             markerId: MarkerId(
@@ -146,7 +147,7 @@ void onInit() {
             ),
             position: point,
             infoWindow: InfoWindow(
-              title: bookingAddressModel!.toAdress!,
+              title: bookingAddressModel!.toAdress ?? "",
             ),
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           ),);
@@ -157,7 +158,7 @@ void onInit() {
           ),
           position: point2,
           infoWindow: InfoWindow(
-            title: bookingAddressModel!.toAdress!,
+            title: bookingAddressModel!.fromAdress!,
           ),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         ),);
@@ -300,15 +301,18 @@ void onInit() {
     distanceFilter: 2,
   );
   getCurrentLocation() async {
+   var fromLocation =LatLng(double.parse(bookingAddressModel!.fromLat ?? "0.0"), double.parse(bookingAddressModel!.fromLng ?? "0.0"));
+   var toLocation =LatLng(double.parse(bookingAddressModel!.toLat ?? "0.0"), double.parse(bookingAddressModel!.toLng ?? "0.0"));
     kGooglePlex= CameraPosition(
-      target: LatLng(double.parse(bookingAddressModel!.toLat.toString()), double.parse(bookingAddressModel!.toLng.toString())),
+      target: type==0?fromLocation:toLocation,
       zoom: 100,
     );
       GoogleMapController controller = await this.controller.future;
       ProgressDialogsManager().isDismissProgressDialog(context);
       isCurrentLocationRecived = true;
       controller.animateCamera(
-        CameraUpdate.newLatLngZoom(LatLng(double.parse(bookingAddressModel!.toLat.toString()), double.parse(bookingAddressModel!.toLng.toString())),12.2),
+        CameraUpdate.newLatLngZoom(
+            type==0?fromLocation:toLocation,12.2),
       );
 
     // var point2=LatLng(double.parse(loginModel!.fromLat.toString()), double.parse(loginModel!.fromLong.toString()));

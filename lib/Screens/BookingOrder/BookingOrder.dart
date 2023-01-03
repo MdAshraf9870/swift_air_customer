@@ -33,7 +33,7 @@ class _BookingOrderState extends State<BookingOrder> {
     // TODO: implement initState
     super.initState();
     bookingOrderController =
-        Get.put(BookingOrderController(widget.bookingAddressModel, context));
+        Get.put(BookingOrderController(widget.bookingAddressModel, context,widget.type));
   }
 
   SingingCharacter? _character = SingingCharacter.medium;
@@ -55,9 +55,12 @@ class _BookingOrderState extends State<BookingOrder> {
                         style: TextStyle(color: Colors.black),
                       ),
                       titleSpacing: 0,
-                      leading: const Icon(
-                        Icons.arrow_back_sharp,
-                        color: Colors.black,
+                      leading: GestureDetector(
+                        onTap: ()=>Get.back(),
+                        child: const Icon(
+                          Icons.arrow_back_sharp,
+                          color: Colors.black,
+                        ),
                       ),
                       bottom: PreferredSize(
                           preferredSize: const Size(00, 20),
@@ -76,8 +79,10 @@ class _BookingOrderState extends State<BookingOrder> {
                                   ),
                                   Expanded(
                                       child: Text(
+                                        widget.type==0?
                                     bookingOrderController
-                                        .bookingAddressModel!.toAdress!,
+                                        .bookingAddressModel!.fromAdress!: bookingOrderController
+                                            .bookingAddressModel!.toAdress!,
                                     style: TextStyle(
                                         overflow: TextOverflow.ellipsis),
                                   ))
@@ -205,6 +210,8 @@ class _BookingOrderState extends State<BookingOrder> {
               children: [
                 Expanded(
                   child: Text(
+                    widget.type==0? bookingOrderController
+                        .bookingAddressModel!.fromAdress!:
                       bookingOrderController
                           .bookingAddressModel!.toAdress!,
                       style: TextStyle(
@@ -327,10 +334,10 @@ class _BookingOrderState extends State<BookingOrder> {
                           : ""
                       }${bookingOrderController.bookingAddressModel!
                           .fromAdress}${bookingOrderController.nearBuyEdt.text
-                          .isNotEmpty ? ", NearBuy-${bookingOrderController
+                          .isNotEmpty ? ", NearBy-${bookingOrderController
                           .nearBuyEdt.text}" : ""
-                      },";
-                    //  Get.back(result: true);
+                      }";
+                     Get.back(result: true);
                       print(bookingOrderController.bookingAddressModel!.fromAdress);
                     }else if(widget.type==1) {
                       bookingOrderController.bookingAddressModel!.toAdress =
@@ -349,11 +356,11 @@ class _BookingOrderState extends State<BookingOrder> {
                           .toAdress}${bookingOrderController.nearBuyEdt.text
                           .isNotEmpty ? ", NearBuy-${bookingOrderController
                           .nearBuyEdt.text}" : ""
-                      },";
+                      }";
                       bookingOrderController.bookingPage++;
                       bookingOrderController.update();
                     }
-                    print( bookingOrderController.bookingAddressModel!.toAdress);
+                    // print( bookingOrderController.bookingAddressModel!.toAdress);
 
                     //  print(loginScreenController.loginEdtController.text);
                   },

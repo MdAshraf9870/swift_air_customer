@@ -1,5 +1,5 @@
 class BookingAddressModel{
-  String? fromLat,fromLng,fromAdress,fromName,fromMobile,toLat,toLng,toAdress;
+  String? fromLat="0.0",fromLng="0.0",fromAdress,fromName,fromMobile,toLat="0.0",toLng="0.0",toAdress;
   BookingAddressModel(
       {this.fromLat,
       this.fromLng,

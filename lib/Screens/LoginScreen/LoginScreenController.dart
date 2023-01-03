@@ -78,11 +78,11 @@ getPermission() async {
           Get.back();
         });
       }
-      ProgressDialogsManager().isDismissProgressDialog(context);
+      const ProgressDialogsManager().isDismissProgressDialog(context);
 
     });
   }catch(e){
-    ProgressDialogsManager().isDismissProgressDialog(context);
+    const ProgressDialogsManager().isDismissProgressDialog(context);
     print(e.toString());
 
   }
